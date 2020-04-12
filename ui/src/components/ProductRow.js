@@ -18,7 +18,7 @@ export default function ProductRow(props) {
 
       <td><Link to={`/image/${product.image}`}> View </Link></td>
       <td>
-        <Link to={{ pathname: `/edit/${product.id}`, search: `?id=${product.id}&Name=${product.Name}` }}>Edit</Link>
+        <Link to={{ pathname: `/edit/${product.id}`}}>Edit</Link>
         {/* <a href={`/#/edit/${product}`}> Edit </a> */}
       </td>
       <td>

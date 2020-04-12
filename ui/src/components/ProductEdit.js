@@ -6,17 +6,50 @@ import graphQLFetch from './graphQlFetch';
 export default class EditProduct extends React.Component {
   constructor(props) {
     super(props);
-    console.log(props);
     this.loadData = this.loadData.bind(this);
+    this.onChange = this.onChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
     this.state = {
       product: {},
     };
-
-    console.log(this.props);
   }
 
   componentDidMount() {
     this.loadData();
+  }
+
+  componentDidUpdate(prevProps) {
+    const { match: { params: { id: prevId } } } = prevProps;
+    const { match: { params: { id } } } = this.props;
+    if (id !== prevId) {
+      this.loadData();
+    }
+  }
+
+  onChange(event, naturalValue) {
+    const { name, value: textValue } = event.target;
+    const value = naturalValue === undefined ? textValue : naturalValue;
+    this.setState(prevState => ({
+      product: { ...prevState.product, [name]: value },
+    }));
+  }
+
+  async handleSubmit(e) {
+    e.preventDefault();
+    const { product } = this.state;
+    const query = `mutation productUpdate($id: Int!, $changes: productUpdateInputs!) {
+      productUpdate(id:$id, changes: $changes) {
+        id Name Category
+        Price Image
+      }
+    }`;
+    const { id, ...changes } = product;
+    const data = await graphQLFetch(query, { id, changes });
+    if (data) {
+      this.setState({ product: data.productUpdate });
+      alert('Updated Succesfully!');
+    }
+    console.log(product); // eslint-disable-line no-console
   }
 
   async loadData() {
@@ -33,7 +66,9 @@ export default class EditProduct extends React.Component {
     const data = await graphQLFetch(query, { id: index });
 
     if (data) {
-      const { product } = data;
+      const { ...product } = data.findProduct;
+      console.log(product);
+      console.log(data);
       product.Name = product.Name ? product.Name : '';
       product.Price = product.Price ? product.Price.toString() : '';
       product.Image = product.Image ? product.Image : '';
@@ -45,7 +80,7 @@ export default class EditProduct extends React.Component {
   }
 
   render() {
-    const { issue: { id } } = this.state;
+    const { product: { id } } = this.state;
     const { match: { params: { id: propsId } } } = this.props;
     if (id == null) {
       if (propsId != null) {
@@ -63,12 +98,12 @@ export default class EditProduct extends React.Component {
                 <td>
                   Name
                   <br />
-                  <TextInput text={this.state.Name} />
+                  <TextInput name="Name" value={this.state.product.Name} onChange={this.onChange} />
                 </td>
                 <td>
                   Price
                   <br />
-                  <NumInput number={this.state.Price} />
+                  <NumInput name="Price" value={this.state.product.Price} onChange={this.onChange} />
                 </td>
               </tr>
               <tr>
@@ -76,7 +111,7 @@ export default class EditProduct extends React.Component {
                   Category
                   {' '}
                   <br />
-                  <select name="category" value={this.state.Category} onChange={this.handleChange}>
+                  <select name="category" value={this.state.product.Category} onChange={this.handleChange}>
                     <option value="Shirts">Shirts</option>
                     <option value="Jeans">Jeans</option>
                     <option value="Jackets">Jackets</option>
@@ -87,7 +122,7 @@ export default class EditProduct extends React.Component {
                 <td>
                   Image URL
                   <br />
-                  <input type="text" name="image" defaultValue={this.state.Image} />
+                  <input type="text" name="image" defaultValue={this.state.product.Image} onChange={this.handleChange}/>
                 </td>
               </tr>
             </tbody>

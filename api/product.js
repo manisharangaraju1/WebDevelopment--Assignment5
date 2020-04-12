@@ -32,7 +32,7 @@ async function list() {
   }
 
   async function update(_, {id, changes}) {
-    const d = getDatabase();
+    const db = getDatabase();
     // if(changes.Name || changes.Price || changes.Category || changes.Image) {
     //   const product = await db.collection('products').findOne({id: id});
     //   Object.assign(product, changes);
