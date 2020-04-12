@@ -8,6 +8,7 @@ export default class ProductAdd extends React.Component {
 
   handleSubmit(e) {
     e.preventDefault();
+    console.log('in here');
     const form = document.forms.addProduct;
     const { createProduct } = this.props;
     createProduct({
@@ -26,7 +27,7 @@ export default class ProductAdd extends React.Component {
   render() {
     return (
       <div>
-        <form name="addProduct" onSubmit={this.handleSubmit}>
+        <form name="addProduct">
           <table className="form-table">
             <tbody>
               <tr>
@@ -62,7 +63,7 @@ export default class ProductAdd extends React.Component {
               </tr>
             </tbody>
           </table>
-          <button type="button">Add Product</button>
+          <button type="button" onClick={this.handleSubmit}>Add Product</button>
         </form>
       </div>
     );

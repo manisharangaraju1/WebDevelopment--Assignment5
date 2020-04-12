@@ -2,9 +2,11 @@ import React from 'react';
 import ProductRow from './ProductRow';
 
 export default function ProductTable(props) {
+  console.log(props);
   const { products } = props;
+  const deleteProduct = props.deleteProduct;
   const productRows = products.map(
-    product => <ProductRow key={product.id} product={product} />,
+    product => <ProductRow key={product.id} product={product} deleteProduct={deleteProduct} />,
   );
   return (
     <table className="bordered-table">
@@ -14,6 +16,8 @@ export default function ProductTable(props) {
           <th>Price</th>
           <th>Category</th>
           <th>Image</th>
+          <th>Edit Product</th>
+          <th>Delete Product</th>
         </tr>
       </thead>
       <tbody>{ productRows }</tbody>

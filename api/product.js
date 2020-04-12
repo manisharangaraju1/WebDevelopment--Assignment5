@@ -6,6 +6,14 @@ async function list() {
     return products;
   }
 
+  async function getProduct(_, { id }) {
+    console.log(id);
+    const db = getDatabase();
+    const product = await db.collection('products').findOne({ id: id });
+    console.log(product);
+    return product;
+  }
+
   async function add(_, { product }) {
     const db = getDatabase();  
     const newProduct = { ...product };
@@ -15,5 +23,23 @@ async function list() {
     return savedProduct;
   }
 
+  async function remove(_, { id }) {
+    console.log('inside remove', id);
+    const db = getDatabase();
+    result = await db.collection('products').removeOne({ id });
+    console.log('After removing');
+    return result.deletedCount === 1;
+  }
 
-  module.exports = { list, add };
+  async function update(_, {id, changes}) {
+    const d = getDatabase();
+    // if(changes.Name || changes.Price || changes.Category || changes.Image) {
+    //   const product = await db.collection('products').findOne({id: id});
+    //   Object.assign(product, changes);
+    // }
+    await db.collection('products').updateOne({ id }, { $set: changes });
+    const savedIssue = await db.collection('products').findOne({ id });
+    return savedIssue;
+  }
+
+  module.exports = { getProduct, list, add, remove, update};
