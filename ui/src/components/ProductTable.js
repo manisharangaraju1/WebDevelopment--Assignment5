@@ -2,7 +2,6 @@ import React from 'react';
 import ProductRow from './ProductRow';
 
 export default function ProductTable(props) {
-  console.log(props);
   const { products } = props;
   const deleteProduct = props.deleteProduct;
   const productRows = products.map(
